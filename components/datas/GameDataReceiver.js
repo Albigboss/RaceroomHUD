@@ -3,50 +3,42 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native'; // On peut retirer View si on n'en a pas besoin
 import dgram from 'react-native-udp';
+import DataDisplay from './dataDisplayer/DataDisplay'
 
 const LISTEN_PORT = 8888;
 const invisibleStyle = { display: 'none' };
 
 // On déstructure les props pour récupérer chaque style individuellement
 export default function GameDataReceiver({
-    speedViewStyle = invisibleStyle,
-    speedTextStyle = invisibleStyle,
+    imageLayout,          // L'objet { x, y, width, height }
+    baseImageWidth,
 
-    gearViewStyle = invisibleStyle,
-    gearTextStyle = invisibleStyle,
+    speedConfig,
+    gearConfig,
+    positionConfig,
+    remainingFuelConfig,
+    tcConfig,
+    absConfig,
+    throttleConfig,
+    brakeConfig,
+    engineMapConfig,
+    fuelPerLapConfig,
+    fuelCapacityConfig,
+    fuelLapConfig,
+    lapConfig,
+    lapTimeConfig,
+    deltaBestLapConfig,
+    predTimeConfig,
+    brakeBiasConfig,
+    flTyrePressureConfig,
+    flTyreTemperatureConfig,
+    frTyrePressureConfig,
+    frTyreTemperatureConfig,
+    rlTyrePressureConfig,
+    rlTyreTemperatureConfig,
+    rrTyrePressureConfig,
+    rrTyreTemperatureConfig,
 
-    positionViewStyle = invisibleStyle,
-    positionTextStyle = invisibleStyle,
-
-    remainingFuelViewStyle = invisibleStyle,
-    remainingFuelTextStyle = invisibleStyle,
-
-    tcViewStyle = invisibleStyle,
-    tcTextStyle = invisibleStyle,
-
-    absViewStyle = invisibleStyle,
-    absTextStyle = invisibleStyle,
-
-    throttleViewStyle = invisibleStyle,
-    throttleTextStyle = invisibleStyle,
-
-    brakeViewStyle = invisibleStyle,
-    brakeTextStyle = invisibleStyle,
-
-    engineMapViewStyle = invisibleStyle,
-    engineMapTextStyle = invisibleStyle,
-
-    fuelPerLapViewStyle = invisibleStyle,
-    fuelPerLapTextStyle = invisibleStyle,
-
-    fuelCapacityViewStyle = invisibleStyle,
-    fuelCapacityTextStyle = invisibleStyle,
-
-    fuelLapViewStyle = invisibleStyle,
-    fuelLapTextStyle = invisibleStyle,
-
-    lapViewStyle = invisibleStyle,
-    lapTextStyle = invisibleStyle,
 
     lapTimeViewStyle = invisibleStyle,
     lapTimeTextStyle = invisibleStyle,
@@ -85,7 +77,7 @@ export default function GameDataReceiver({
         position: 0,
         remainingFuel: 999,
         tc: 12,
-        abs: 12,
+        abs: 13,
         throttle: 1,
         brake: 1,
         engineMap: 0,
@@ -127,11 +119,18 @@ export default function GameDataReceiver({
     // Chacun utilise sa propre prop de style.
     return (
         <>
-            <View style={speedViewStyle}>
-                <Text style={speedTextStyle}>{gameData.speed}</Text>
-            </View>
-            <View style={gearViewStyle}>
-                <Text style={gearTextStyle}>{(() => {
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.speed}
+                position={speedConfig.position}
+                textStyle={speedConfig.textStyle}
+                baseFontSize={speedConfig.baseFontSize}
+            />
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={(() => {
                     switch (gameData.gear) {
                         case -2:
                             return '-';
@@ -142,43 +141,112 @@ export default function GameDataReceiver({
                         default:
                             return gameData.gear;
                     }
-                })()}</Text>
-            </View>
-            <View style={positionViewStyle}>
-                <Text style={positionTextStyle}>{gameData.position}</Text>
-            </View>
-            <View style={remainingFuelViewStyle}>
-                <Text style={remainingFuelTextStyle} >{gameData.remainingFuel}</Text>
-            </View>
-            <View style={tcViewStyle}>
-                <Text style={tcTextStyle} >{gameData.tc}</Text>
-            </View>
-            <View style={absViewStyle}>
-                <Text style={absTextStyle} >{gameData.abs}</Text>
-            </View>
-            <View style={throttleViewStyle}>
-                <Text style={throttleTextStyle} >{(((gameData.throttle) * 100).toFixed(0) || '--%')}</Text>
-            </View>
-            <View style={brakeViewStyle}>
-                <Text style={brakeTextStyle} >{(((gameData.brake) * 100).toFixed(0) || '--%')}</Text>
-            </View>
-            <View style={engineMapViewStyle}>
-                <Text style={engineMapTextStyle} >{gameData.engineMap}</Text>
-            </View>
-            <View style={fuelPerLapViewStyle}>
-                <Text style={fuelPerLapTextStyle} >{gameData.fuelPerLap.toFixed(2)}</Text>
-            </View>
-            <View style={fuelCapacityViewStyle}>
-                <Text style={fuelCapacityTextStyle} >{gameData.fuelCapacity.toFixed(0)}</Text>
-            </View>
-            <View style={fuelLapViewStyle}>
-                <Text style={fuelLapTextStyle} >{((parseFloat(gameData.remainingFuel) / parseFloat(gameData.fuelPerLap)).toFixed(1)) + 'L'}</Text>
-            </View>
-            <View style={lapViewStyle}>
-                <Text style={lapTextStyle} >{gameData.lap}</Text>
-            </View>
-            <View style={lapTimeViewStyle}>
-                <Text style={lapTimeTextStyle} >{
+                })()}
+                position={gearConfig.position}
+                textStyle={gearConfig.textStyle}
+                baseFontSize={gearConfig.baseFontSize}
+            />
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.position}
+                position={positionConfig.position}
+                textStyle={positionConfig.textStyle}
+                baseFontSize={positionConfig.baseFontSize}
+            />
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.remainingFuel}
+                position={remainingFuelConfig.position}
+                textStyle={remainingFuelConfig.textStyle}
+                baseFontSize={remainingFuelConfig.baseFontSize}
+            />
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.tc}
+                position={tcConfig.position}
+                textStyle={tcConfig.textStyle}
+                baseFontSize={tcConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.abs}
+                position={absConfig.position}
+                textStyle={absConfig.textStyle}
+                baseFontSize={absConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={(((gameData.throttle) * 100).toFixed(0) || '--%')}
+                position={throttleConfig.position}
+                textStyle={throttleConfig.textStyle}
+                baseFontSize={throttleConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={(((gameData.brake) * 100).toFixed(0) || '--%')}
+                position={brakeConfig.position}
+                textStyle={brakeConfig.textStyle}
+                baseFontSize={brakeConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={(((gameData.engineMap) * 100).toFixed(0) || '--%')}
+                position={engineMapConfig.position}
+                textStyle={engineMapConfig.textStyle}
+                baseFontSize={engineMapConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.fuelPerLap.toFixed(2)}
+                position={fuelPerLapConfig.position}
+                textStyle={fuelPerLapConfig.textStyle}
+                baseFontSize={fuelPerLapConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.fuelCapacity.toFixed(0)}
+                position={fuelCapacityConfig.position}
+                textStyle={fuelCapacityConfig.textStyle}
+                baseFontSize={fuelCapacityConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={((parseFloat(gameData.remainingFuel) / parseFloat(gameData.fuelPerLap)).toFixed(1)) + 'L'}
+                position={fuelLapConfig.position}
+                textStyle={fuelLapConfig.textStyle}
+                baseFontSize={fuelLapConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.lap}
+                position={lapConfig.position}
+                textStyle={lapConfig.textStyle}
+                baseFontSize={lapConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={
                     (() => {
                         const duration = gameData.lapTime;
                         const minutes = Math.floor(duration / 60);
@@ -191,15 +259,25 @@ export default function GameDataReceiver({
                         const mmm = String(milliseconds).padStart(3, '0');
                         return mm + ':' + ss + '.' + mmm;
                     })()
-                }</Text>
-            </View>
-            <View style={deltaBestLapViewStyle}>
-                <Text style={[deltaBestLapTextStyle, { color: parseFloat(gameData.deltaBestLap) > 0 ? 'red' : 'green' }]} >
-                    {(parseFloat(gameData.deltaBestLap) < 0 ? '-' : '+') + gameData.deltaBestLap.toFixed(3)}
-                </Text>
-            </View>
-            <View style={predTimeViewStyle}>
-                <Text style={predTimeTextStyle} >{
+                }
+                position={lapTimeConfig.position}
+                textStyle={lapTimeConfig.textStyle}
+                baseFontSize={lapTimeConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={(parseFloat(gameData.deltaBestLap) < 0 ? '-' : '+') + gameData.deltaBestLap.toFixed(3)}
+                position={deltaBestLapConfig.position}
+                textStyle={[deltaBestLapConfig.textStyle, {color: parseFloat(gameData.deltaBestLap) > 0 ? 'red' : 'green' }]}
+                baseFontSize={deltaBestLapConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={
                     isNaN(parseFloat(gameData.bestLap) + parseFloat(gameData.deltaBestLap)) ? '--:--.---' : (() => {
                         //parseFloat(gameData.bestLap) + parseFloat(gameData.deltaBestLap)
                         const predictedTime = gameData.bestLap + gameData.deltaBestLap;
@@ -212,40 +290,100 @@ export default function GameDataReceiver({
                         const ss = String(seconds).padStart(2, '0');
                         const mmm = String(milliseconds).padStart(3, '0');
                         return mm + ':' + ss + '.' + mmm;
-                    })()}
-                </Text>
-            </View>
-            <View style={brakeBiasViewStyle}>
-                <Text style={brakeBiasTextStyle} >{(gameData.brakeBias * 100).toFixed(0)}</Text>
-            </View>
+                    })()
+                }
+                position={predTimeConfig.position}
+                textStyle={predTimeConfig.textStyle}
+                baseFontSize={predTimeConfig.baseFontSize}
+            />
 
-            <View style={flTyrePressureViewStyle}>
-                <Text style={flTyrePressureTextStyle} >{gameData.flTyrePressure}</Text>
-            </View>
-            <View style={flTyreTemperatureViewStyle}>
-                <Text style={flTyreTemperatureTextStyle} >{gameData.flTyreTemperature + '°C'}</Text>
-            </View>
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={(gameData.brakeBias * 100).toFixed(0)}
+                position={brakeBiasConfig.position}
+                textStyle={brakeBiasConfig.textStyle}
+                baseFontSize={brakeBiasConfig.baseFontSize}
+            />
 
-            <View style={frTyrePressureViewStyle}>
-                <Text style={frTyrePressureTextStyle} >{gameData.frTyrePressure}</Text>
-            </View>
-            <View style={frTyreTemperatureViewStyle}>
-                <Text style={frTyreTemperatureTextStyle} >{gameData.frTyreTemperature + '°C'}</Text>
-            </View>
+            {/*Fl tyre*/}
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.flTyrePressure.toFixed(2)}
+                position={flTyrePressureConfig.position}
+                textStyle={flTyrePressureConfig.textStyle}
+                baseFontSize={flTyrePressureConfig.baseFontSize}
+            />
 
-            <View style={rlTyrePressureViewStyle}>
-                <Text style={rlTyrePressureTextStyle} >{gameData.rlTyrePressure}</Text>
-            </View>
-            <View style={rlTyreTemperatureViewStyle}>
-                <Text style={rlTyreTemperatureTextStyle} >{gameData.rlTyreTemperature + '°C'}</Text>
-            </View>
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.flTyreTemperature.toFixed(1) + '°C'}
+                position={flTyreTemperatureConfig.position}
+                textStyle={flTyreTemperatureConfig.textStyle}
+                baseFontSize={flTyreTemperatureConfig.baseFontSize}
+            />
 
-            <View style={rrTyrePressureViewStyle}>
-                <Text style={rrTyrePressureTextStyle} >{gameData.rrTyrePressure}</Text>
-            </View>
-            <View style={rrTyreTemperatureViewStyle}>
-                <Text style={rrTyreTemperatureTextStyle} >{gameData.rrTyreTemperature + '°C'}</Text>
-            </View>
+            {/*Fr tyre*/}
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.frTyrePressure.toFixed(2)}
+                position={frTyrePressureConfig.position}
+                textStyle={frTyrePressureConfig.textStyle}
+                baseFontSize={frTyrePressureConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.frTyreTemperature.toFixed(1) + '°C'}
+                position={frTyreTemperatureConfig.position}
+                textStyle={frTyreTemperatureConfig.textStyle}
+                baseFontSize={frTyreTemperatureConfig.baseFontSize}
+            />
+
+            {/*Rl tyre*/}
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.rlTyrePressure.toFixed(2)}
+                position={rlTyrePressureConfig.position}
+                textStyle={rlTyrePressureConfig.textStyle}
+                baseFontSize={rlTyrePressureConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.rlTyreTemperature.toFixed(1) + '°C'}
+                position={rlTyreTemperatureConfig.position}
+                textStyle={rlTyreTemperatureConfig.textStyle}
+                baseFontSize={rlTyreTemperatureConfig.baseFontSize}
+            />
+
+            {/*Rr tyre*/}
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.rrTyrePressure.toFixed(2)}
+                position={rrTyrePressureConfig.position}
+                textStyle={rrTyrePressureConfig.textStyle}
+                baseFontSize={rrTyrePressureConfig.baseFontSize}
+            />
+
+            <DataDisplay
+                imageLayout={imageLayout}
+                baseImageWidth={baseImageWidth}
+                value={gameData.rrTyreTemperature.toFixed(1) + '°C'}
+                position={rrTyreTemperatureConfig.position}
+                textStyle={rrTyreTemperatureConfig.textStyle}
+                baseFontSize={rrTyreTemperatureConfig.baseFontSize}
+            />
+
+
+            
         </>
     );
 }

@@ -1,134 +1,283 @@
-import { View, Text, StyleSheet, ImageBackground, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, ImageBackground, Dimensions, Image } from 'react-native'
 import GameDataReceiver from '../../datas/GameDataReceiver'; // Assurez-vous du bon chemin
+import React, { useState, useEffect, useMemo } from 'react'
 
 export function Porsche911GT3R() {
 
     const image = require('../../../assets/images/hudImages/porsche911GT3R.png')
 
+    // État pour stocker la taille du conteneur
+    const [containerLayout, setContainerLayout] = useState(null);
+    // État pour stocker la taille de l'image source
+    const [imageDimensions, setImageDimensions] = useState(null);
+
+    const DESIGN_IMAGE_WIDTH = 1088; // La largeur de votre design
+
+
+    // 1. Obtenir les dimensions de l'image source une seule fois
+    useEffect(() => {
+        const source = Image.resolveAssetSource(image);
+        if (source) {
+            setImageDimensions({ width: source.width, height: source.height });
+        }
+    }, []);
+
+    // 2. Calculer la disposition de l'image visible chaque fois que la taille du conteneur change
+    const imageLayout = useMemo(() => {
+        if (!containerLayout || !imageDimensions) {
+            return null; // On attend d'avoir toutes les infos
+        }
+
+        const { width: containerWidth, height: containerHeight } = containerLayout;
+        const { width: imgWidth, height: imgHeight } = imageDimensions;
+
+        const containerRatio = containerWidth / containerHeight;
+        const imageRatio = imgWidth / imgHeight;
+
+        let finalWidth, finalHeight, offsetX, offsetY;
+
+        // Si le conteneur est plus "large" que l'image -> letterboxing (bandes haut/bas)
+        if (containerRatio > imageRatio) {
+            finalHeight = containerHeight;
+            finalWidth = containerHeight * imageRatio;
+            offsetX = (containerWidth - finalWidth) / 2;
+            offsetY = 0;
+        } else { // Si le conteneur est plus "haut" que l'image -> pillarboxing (bandes côté)
+            finalWidth = containerWidth;
+            finalHeight = containerWidth / imageRatio;
+            offsetY = (containerHeight - finalHeight) / 2;
+            offsetX = 0;
+        }
+
+        return {
+            width: finalWidth,
+            height: finalHeight,
+            x: offsetX,
+            y: offsetY,
+        };
+    }, [containerLayout, imageDimensions]);
 
     return (
-        <ImageBackground source={image} style={styles.imageBackground}>
-            <GameDataReceiver
-                speedViewStyle={styles.viewSpeed}
-                speedTextStyle={styles.textSpeed}
-                gearViewStyle={styles.viewGear}
-                gearTextStyle={styles.textGear}
-                positionViewStyle={styles.viewPosition}
-                positionTextStyle={styles.textPosition}
-                remainingFuelViewStyle={styles.viewRemainingFuel}
-                remainingFuelTextStyle={styles.textRemainingFuel}
-                tcViewStyle={styles.viewTc}
-                tcTextStyle={styles.textTc}
-                absViewStyle={styles.viewAbs}
-                absTextStyle={styles.textAbs}
-                throttleViewStyle={styles.viewThrottle}
-                throttleTextStyle={styles.textThrottle}
-                brakeViewStyle={styles.viewBrake}
-                brakeTextStyle={styles.textBrake}
-                engineMapViewStyle={styles.viewEngineMap}
-                engineMapTextStyle={styles.textEngineMap}
-                fuelPerLapViewStyle={styles.viewFuelPerLap}
-                fuelPerLapTextStyle={styles.textFuelPerLap}
-                fuelCapacityViewStyle={styles.viewFuelCapacity}
-                fuelCapacityTextStyle={styles.textFuelCapacity}
-                fuelLapViewStyle={styles.viewFuelLap}
-                fuelLapTextStyle={styles.textFuelLap}
-                lapViewStyle={styles.viewLap}
-                lapTextStyle={styles.textLap}
-                lapTimeViewStyle={styles.viewLapTime}
-                lapTimeTextStyle={styles.textLapTime}
-                deltaBestLapViewStyle={styles.viewDeltaBestLap}
-                deltaBestLapTextStyle={styles.textDeltaBestLap}
-                predTimeViewStyle={styles.viewPredTime}
-                predTimeTextStyle={styles.textPredTime}
-                brakeBiasViewStyle={styles.viewBrakeBias}
-                brakeBiasTextStyle={styles.textBrakeBias}
-                flTyrePressureViewStyle={styles.viewFlTyrePressure}
-                flTyrePressureTextStyle={styles.textFlTyrePressure}
-                frTyrePressureViewStyle={styles.viewFrTyrePressure}
-                frTyrePressureTextStyle={styles.textFrTyrePressure}
-                rlTyrePressureViewStyle={styles.viewRlTyrePressure}
-                rlTyrePressureTextStyle={styles.textRlTyrePressure}
-                rrTyrePressureViewStyle={styles.viewRrTyrePressure}
-                rrTyrePressureTextStyle={styles.textRrTyrePressure}
-                flTyreTemperatureViewStyle={styles.viewFlTyreTemperature}
-                flTyreTemperatureTextStyle={styles.textFlTyreTemperature}
-                frTyreTemperatureViewStyle={styles.viewFrTyreTemperature}
-                frTyreTemperatureTextStyle={styles.textFrTyreTemperature}
-                rlTyreTemperatureViewStyle={styles.viewRlTyreTemperature}
-                rlTyreTemperatureTextStyle={styles.textRlTyreTemperature}
-                rrTyreTemperatureViewStyle={styles.viewRrTyreTemperature}
-                rrTyreTemperatureTextStyle={styles.textRrTyreTemperature}
-            />
-        </ImageBackground>
+
+        <View
+            style={styles.screenContainer}
+            // 3. Mesurer le conteneur avec onLayout
+            onLayout={(event) => {
+                const { width, height } = event.nativeEvent.layout;
+                setContainerLayout({ width, height });
+            }}
+        >
+
+            {/* 2. On force l'image à remplir cette View avec un style absolu */}
+            <ImageBackground
+                source={image}
+                style={styles.imageBackground}
+                resizeMode="contain" // resizeMode est mieux en prop qu'en style
+
+            >
+                {/* 3. Le contenu est centré par l'ImageBackground comme avant */}
+                {imageLayout && (<GameDataReceiver
+                    // NOUVEAU : On passe l'objet de disposition calculé
+                    imageLayout={imageLayout}
+
+                    baseImageWidth={DESIGN_IMAGE_WIDTH}
+
+                    speedConfig={{
+                        position: { top: 17.4, left: 39.6, width: 20.5, height: 10, },
+                        textStyle: styles.textSpeed,
+                        baseFontSize: 60
+                    }}
+
+                    gearConfig={{
+                        position: { top: 28.5, left: 39.6, width: 20.6, height: 33, },
+                        textStyle: styles.textGear,
+                        baseFontSize: 200
+                    }}
+
+                    positionConfig={{
+                        position: { top: 54, left: 10, width: 4, height: 7.3, },
+                        textStyle: styles.textPosition,
+                        baseFontSize: 30
+                    }}
+
+                    remainingFuelConfig={{
+                        position: { top: 45, left: 28.7, width: 10.5, height: 8, },
+                        textStyle: styles.textRemainingFuel,
+                        baseFontSize: 40
+                    }}
+
+                    tcConfig={{
+                        position: { top: 63, left: 21, width: 5, height: 8, },
+                        textStyle: styles.textTc,
+                        baseFontSize: 35
+                    }}
+
+                    absConfig={{
+                        position: { top: 63, left: 33.5, width: 5, height: 8, },
+                        textStyle: styles.textAbs,
+                        baseFontSize: 35
+                    }}
+
+                    throttleConfig={{
+                        position: { top: 37, left: 9.5, width: 4.8, height: 7.3, },
+                        textStyle: styles.textThrottle,
+                        baseFontSize: 25
+                    }}
+
+                    brakeConfig={{
+                        position: { top: 45.5, left: 9.5, width: 4.8, height: 7.3, },
+                        textStyle: styles.textBrake,
+                        baseFontSize: 25
+                    }}
+
+                    engineMapConfig={{
+                        position: { top: 28.5, left: 10, width: 4, height: 7.3, },
+                        textStyle: styles.textEngineMap,
+                        baseFontSize: 30
+                    }}
+
+                    fuelPerLapConfig={{
+                        position: { top: 36.7, left: 28.7, width: 10.5, height: 8, },
+                        textStyle: styles.textFuelPerLap,
+                        baseFontSize: 40
+                    }}
+
+                    fuelCapacityConfig={{
+                        position: { top: 53.2, left: 28.7, width: 10.5, height: 8, },
+                        textStyle: styles.textFuelCapacity,
+                        baseFontSize: 40
+                    }}
+
+                    fuelLapConfig={{
+                        position: { top: 28.2, left: 28.7, width: 10.5, height: 8, },
+                        textStyle: styles.textFuelLap,
+                        baseFontSize: 30
+                    }}
+
+                    lapConfig={{
+                        position: { top: 19.3, left: 70, width: 6.5, height: 7.5, },
+                        textStyle: styles.textLap,
+                        baseFontSize: 30
+                    }}
+
+                    lapTimeConfig={{
+                        position: {top: 33, left: 60.3, width: 29, height: 12,},
+                        textStyle: styles.textLapTime,
+                        baseFontSize: 45
+                    }}
+
+                    deltaBestLapConfig={{
+                        position: {top: 49, left: 60.3, width: 14, height: 12.4,},
+                        textStyle: styles.textDeltaBestLap,
+                        baseFontSize: 35
+                    }}
+
+                    predTimeConfig={{
+                        position: {top: 49, left: 74.3, width: 15.2, height: 12.5,},
+                        textStyle: styles.textPredTime,
+                        baseFontSize: 35
+                    }}
+
+                    brakeBiasConfig={{
+                        position: {top: 68.5, left: 78.5, width: 9.3, height: 7.2,},
+                        textStyle: styles.textBrakeBias,
+                        baseFontSize: 30
+                    }}
+
+                    flTyrePressureConfig={{
+                        position: {top: 62, left: 39.5, width: 6.5, height: 4,},
+                        textStyle: styles.textFlTyrePressure,
+                        baseFontSize: 20
+                    }}
+
+                    flTyreTemperatureConfig={{
+                        position: {top: 65.9, left: 39.5, width: 10.2, height: 6,},
+                        textStyle: styles.textFlTyreTemperature,
+                        baseFontSize: 25
+                    }}
+
+                    frTyrePressureConfig={{
+                        position: {top: 62, left: 53.5, width: 6.5, height: 4,},
+                        textStyle: styles.textFrTyrePressure,
+                        baseFontSize: 20
+                    }}
+
+                    frTyreTemperatureConfig={{
+                        position: {top: 65.9, left: 50, width: 10.2, height: 6,},
+                        textStyle: styles.textFrTyreTemperature,
+                        baseFontSize: 25
+                    }}
+
+
+                    rlTyrePressureConfig={{
+                        position: {top: 72, left: 39.5, width: 6.5, height: 4,},
+                        textStyle: styles.textRlTyrePressure,
+                        baseFontSize: 20
+                    }}
+
+                    rlTyreTemperatureConfig={{
+                        position: {top: 76, left: 39.5, width: 10.2, height: 6,},
+                        textStyle: styles.textRlTyreTemperature,
+                        baseFontSize: 25
+                    }}
+
+
+                    rrTyrePressureConfig={{
+                        position: {top: 72, left: 53.5, width: 6.5, height: 4,},
+                        textStyle: styles.textRrTyrePressure,
+                        baseFontSize: 20
+                    }}
+
+                    rrTyreTemperatureConfig={{
+                        position: {top: 76, left: 50, width: 10.2, height: 6,},
+                        textStyle: styles.textRrTyreTemperature,
+                        baseFontSize: 25
+                    }}
+
+                />)}
+            </ImageBackground>
+
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
 
-    imageBackground: {
+    // NOUVEAU STYLE pour le conteneur de l'écran
+    screenContainer: {
         flex: 1,
-        resizeMode: 'contain',
+        backgroundColor: '#1c1d21',
+    },
+
+    // STYLE MODIFIÉ pour l'image de fond
+    imageBackground: {
+        // Ce raccourci magique le force à remplir son parent (la View)
+        ...StyleSheet.absoluteFillObject,
+
+        // On garde le centrage pour le contenu (GameDataReceiver)
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'black',
     },
 
     // --- Styles speed ---
-    viewSpeed: {
-
-        position: 'absolute',
-        top: '11%',
-        left: '40.8%',
-        width: '19%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
 
     textSpeed: {
         color: 'white',
         fontSize: 30,
+        lineHeight: 30,
         fontWeight: 'bold',
     },
 
     // --- Styles gear ---
-
-    viewGear: {
-        position: 'absolute',
-        top: '24%',
-        left: '40.8%',
-        width: '19%',
-        height: '38%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textGear: {
         color: 'white',
-        fontSize: 150,
+        fontSize: 140,
         fontWeight: 'bold',
-        lineHeight: 150,
+        lineHeight: 140,
 
     },
 
     // --- Styles position ---
-
-    viewPosition: {
-        position: 'absolute',
-        top: '54%',
-        left: '12%',
-        width: '5%',
-        height: '8%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-
-    },
 
     textPosition: {
         color: 'white',
@@ -137,20 +286,7 @@ const styles = StyleSheet.create({
         lineHeight: 25,
     },
 
-    // --- remainingFuel position ---
-
-    viewRemainingFuel: {
-        position: 'absolute',
-        top: '43%',
-        left: '30.5%',
-        width: '10%',
-        height: '9.3%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-
-    },
+    // --- remainingFuel  ---
 
     textRemainingFuel: {
         color: 'white',
@@ -160,19 +296,7 @@ const styles = StyleSheet.create({
     },
 
 
-    // --- Tc position ---
-
-    viewTc: {
-        position: 'absolute',
-        top: '65%',
-        left: '23%',
-        width: '5%',
-        height: '8.5%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+    // --- Tc  ---
 
     textTc: {
         color: 'white',
@@ -183,18 +307,6 @@ const styles = StyleSheet.create({
 
     // --- Abs position ---
 
-    viewAbs: {
-        position: 'absolute',
-        top: '65%',
-        left: '34.6%',
-        width: '5%',
-        height: '8.5%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textAbs: {
         color: 'white',
         fontSize: 25,
@@ -203,18 +315,6 @@ const styles = StyleSheet.create({
     },
 
     // --- Throttle position ---
-
-    viewThrottle: {
-        position: 'absolute',
-        top: '44%',
-        left: '12%',
-        width: '5%',
-        height: '8.5%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
 
     textThrottle: {
         color: 'white',
@@ -225,18 +325,6 @@ const styles = StyleSheet.create({
 
     // --- Brake position ---
 
-    viewBrake: {
-        position: 'absolute',
-        top: '34%',
-        left: '12%',
-        width: '5%',
-        height: '8.5%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textBrake: {
         color: 'white',
         fontSize: 20,
@@ -245,18 +333,6 @@ const styles = StyleSheet.create({
     },
 
     // --- EngineMap position ---
-
-    viewEngineMap: {
-        position: 'absolute',
-        top: '24%',
-        left: '12%',
-        width: '5%',
-        height: '8.5%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
 
     textEngineMap: {
         color: 'white',
@@ -268,18 +344,6 @@ const styles = StyleSheet.create({
 
     // --- FuelPerLap position ---
 
-    viewFuelPerLap: {
-        position: 'absolute',
-        top: '33.5%',
-        left: '30.5%',
-        width: '10%',
-        height: '9.3%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textFuelPerLap: {
         color: 'white',
         fontSize: 28,
@@ -290,18 +354,6 @@ const styles = StyleSheet.create({
 
     // --- FuelCapacity position ---
 
-    viewFuelCapacity: {
-        position: 'absolute',
-        top: '53%',
-        left: '30.5%',
-        width: '10%',
-        height: '9.3%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textFuelCapacity: {
         color: 'white',
         fontSize: 28,
@@ -310,18 +362,6 @@ const styles = StyleSheet.create({
     },
 
     // --- FuelLap position ---
-
-    viewFuelLap: {
-        position: 'absolute',
-        top: '23.6%',
-        left: '30.5%',
-        width: '10%',
-        height: '9.3%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
 
     textFuelLap: {
         color: 'white',
@@ -333,18 +373,6 @@ const styles = StyleSheet.create({
 
     // --- Lap position ---
 
-    viewLap: {
-        position: 'absolute',
-        top: '13.3%',
-        left: '69.2%',
-        width: '5.9%',
-        height: '8.5%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textLap: {
         color: 'white',
         fontSize: 25,
@@ -353,18 +381,6 @@ const styles = StyleSheet.create({
     },
 
     // --- LapTime position ---
-
-    viewLapTime: {
-        position: 'absolute',
-        top: '29.5%',
-        left: '60.3%',
-        width: '27%',
-        height: '13.9%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
 
     textLapTime: {
         color: 'white',
@@ -375,18 +391,6 @@ const styles = StyleSheet.create({
 
     // --- DeltaBestLap position ---
 
-    viewDeltaBestLap: {
-        position: 'absolute',
-        top: '48.2%',
-        left: '60.3%',
-        width: '13.5%',
-        height: '14%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textDeltaBestLap: {
         //color: 'white',
         fontSize: 21,
@@ -396,18 +400,6 @@ const styles = StyleSheet.create({
 
     // --- PredTime position ---
 
-    viewPredTime: {
-        position: 'absolute',
-        top: '48.2%',
-        left: '74%',
-        width: '13.5%',
-        height: '14%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textPredTime: {
         color: 'white',
         fontSize: 21,
@@ -416,18 +408,6 @@ const styles = StyleSheet.create({
     },
 
     // --- BrakeBias position ---
-
-    viewBrakeBias: {
-        position: 'absolute',
-        top: '71%',
-        left: '77%',
-        width: '9%',
-        height: '8%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
 
     textBrakeBias: {
         color: 'white',
@@ -439,35 +419,11 @@ const styles = StyleSheet.create({
 
     // --- FlTyre position ---
 
-    viewFlTyrePressure: {
-        position: 'absolute',
-        top: '63.5%',
-        left: '40.7%',
-        width: '6%',
-        height: '4%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textFlTyrePressure: {
         color: 'white',
         fontSize: 15,
         lineHeight: 13,
         fontWeight: 'bold',
-    },
-
-    viewFlTyreTemperature: {
-        position: 'absolute',
-        top: '68%',
-        left: '40.7%',
-        width: '9.5%',
-        height: '6%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
 
     textFlTyreTemperature: {
@@ -480,35 +436,11 @@ const styles = StyleSheet.create({
 
     // --- FrTyre position ---
 
-    viewFrTyrePressure: {
-        position: 'absolute',
-        top: '63.5%',
-        left: '53.7%',
-        width: '6%',
-        height: '4%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textFrTyrePressure: {
         color: 'white',
         fontSize: 15,
         lineHeight: 13,
         fontWeight: 'bold',
-    },
-
-    viewFrTyreTemperature: {
-        position: 'absolute',
-        top: '68%',
-        left: '50.5%',
-        width: '9.5%',
-        height: '6%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
 
     textFrTyreTemperature: {
@@ -520,35 +452,11 @@ const styles = StyleSheet.create({
 
     // --- RlTyre position ---
 
-    viewRlTyrePressure: {
-        position: 'absolute',
-        top: '75%',
-        left: '40.7%',
-        width: '6%',
-        height: '4%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textRlTyrePressure: {
         color: 'white',
         fontSize: 15,
         lineHeight: 13,
         fontWeight: 'bold',
-    },
-
-    viewRlTyreTemperature: {
-        position: 'absolute',
-        top: '80.5%',
-        left: '40.7%',
-        width: '9.5%',
-        height: '6%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
 
     textRlTyreTemperature: {
@@ -560,35 +468,11 @@ const styles = StyleSheet.create({
 
     // --- RrTyre position ---
 
-    viewRrTyrePressure: {
-        position: 'absolute',
-        top: '75%',
-        left: '53.7%',
-        width: '6%',
-        height: '4%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
     textRrTyrePressure: {
         color: 'white',
         fontSize: 15,
         lineHeight: 13,
         fontWeight: 'bold',
-    },
-
-    viewRrTyreTemperature: {
-        position: 'absolute',
-        top: '80.5%',
-        left: '50.5%',
-        width: '9.5%',
-        height: '6%',
-        borderColor: 'white',
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
 
     textRrTyreTemperature: {

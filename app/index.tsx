@@ -47,9 +47,6 @@ const styles = StyleSheet.create({
   // Le conteneur qui prend tout l'écran
   container: {
     flex: 1, // TRÈS IMPORTANT: prend toute la hauteur disponible
-    backgroundColor: '#fff', // Optionnel: pour voir la zone
-    flexDirection: 'column',
-    justifyContent: 'center', 
-    //alignItems: 'center', // Centre les enfants horizontalement
+
   },
 });
