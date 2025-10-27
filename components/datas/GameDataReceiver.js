@@ -1,73 +1,47 @@
 // GameDataReceiver.js (ou temp.js)
 
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native'; // On peut retirer View si on n'en a pas besoin
 import dgram from 'react-native-udp';
 import DataDisplay from './dataDisplayer/DataDisplay'
 
 const LISTEN_PORT = 8888;
 const invisibleStyle = { display: 'none' };
+const defaultConfig = {
+    position: null, // Si la position est null, on ne l'affiche pas
+    textStyle: {},
+    baseFontSize: 0
+};
 
 // On déstructure les props pour récupérer chaque style individuellement
 export default function GameDataReceiver({
     imageLayout,          // L'objet { x, y, width, height }
     baseImageWidth,
 
-    speedConfig,
-    gearConfig,
-    positionConfig,
-    remainingFuelConfig,
-    tcConfig,
-    absConfig,
-    throttleConfig,
-    brakeConfig,
-    engineMapConfig,
-    fuelPerLapConfig,
-    fuelCapacityConfig,
-    fuelLapConfig,
-    lapConfig,
-    lapTimeConfig,
-    deltaBestLapConfig,
-    predTimeConfig,
-    brakeBiasConfig,
-    flTyrePressureConfig,
-    flTyreTemperatureConfig,
-    frTyrePressureConfig,
-    frTyreTemperatureConfig,
-    rlTyrePressureConfig,
-    rlTyreTemperatureConfig,
-    rrTyrePressureConfig,
-    rrTyreTemperatureConfig,
-
-
-    lapTimeViewStyle = invisibleStyle,
-    lapTimeTextStyle = invisibleStyle,
-
-    deltaBestLapViewStyle = invisibleStyle,
-    deltaBestLapTextStyle = invisibleStyle,
-
-    predTimeViewStyle = invisibleStyle,
-    predTimeTextStyle = invisibleStyle,
-
-    brakeBiasViewStyle = invisibleStyle,
-    brakeBiasTextStyle = invisibleStyle,
-
-    flTyrePressureViewStyle = invisibleStyle,
-    flTyrePressureTextStyle = invisibleStyle,
-    frTyrePressureViewStyle = invisibleStyle,
-    frTyrePressureTextStyle = invisibleStyle,
-    rlTyrePressureViewStyle = invisibleStyle,
-    rlTyrePressureTextStyle = invisibleStyle,
-    rrTyrePressureViewStyle = invisibleStyle,
-    rrTyrePressureTextStyle = invisibleStyle,
-    flTyreTemperatureViewStyle = invisibleStyle,
-    flTyreTemperatureTextStyle = invisibleStyle,
-    frTyreTemperatureViewStyle = invisibleStyle,
-    frTyreTemperatureTextStyle = invisibleStyle,
-    rlTyreTemperatureViewStyle = invisibleStyle,
-    rlTyreTemperatureTextStyle = invisibleStyle,
-    rrTyreTemperatureViewStyle = invisibleStyle,
-    rrTyreTemperatureTextStyle = invisibleStyle,
+    speedConfig  = defaultConfig,
+    gearConfig  = defaultConfig,
+    positionConfig  = defaultConfig,
+    remainingFuelConfig  = defaultConfig,
+    tcConfig  = defaultConfig,
+    absConfig  = defaultConfig,
+    throttleConfig  = defaultConfig,
+    brakeConfig  = defaultConfig,
+    engineMapConfig  = defaultConfig,
+    fuelPerLapConfig  = defaultConfig,
+    fuelCapacityConfig  = defaultConfig,
+    fuelLapConfig  = defaultConfig,
+    lapConfig  = defaultConfig,
+    lapTimeConfig  = defaultConfig,
+    deltaBestLapConfig  = defaultConfig,
+    predTimeConfig  = defaultConfig,
+    brakeBiasConfig  = defaultConfig,
+    flTyrePressureConfig  = defaultConfig,
+    flTyreTemperatureConfig  = defaultConfig,
+    frTyrePressureConfig  = defaultConfig,
+    frTyreTemperatureConfig  = defaultConfig,
+    rlTyrePressureConfig  = defaultConfig,
+    rlTyreTemperatureConfig  = defaultConfig,
+    rrTyrePressureConfig  = defaultConfig,
+    rrTyreTemperatureConfig  = defaultConfig,
 
 
 }) {
@@ -201,7 +175,7 @@ export default function GameDataReceiver({
             <DataDisplay
                 imageLayout={imageLayout}
                 baseImageWidth={baseImageWidth}
-                value={(((gameData.engineMap) * 100).toFixed(0) || '--%')}
+                value={gameData.engineMap}
                 position={engineMapConfig.position}
                 textStyle={engineMapConfig.textStyle}
                 baseFontSize={engineMapConfig.baseFontSize}
@@ -268,7 +242,7 @@ export default function GameDataReceiver({
             <DataDisplay
                 imageLayout={imageLayout}
                 baseImageWidth={baseImageWidth}
-                value={(parseFloat(gameData.deltaBestLap) < 0 ? '-' : '+') + gameData.deltaBestLap.toFixed(3)}
+                value={(parseFloat(gameData.deltaBestLap) < 0 ? '' : '+') + gameData.deltaBestLap.toFixed(3)}
                 position={deltaBestLapConfig.position}
                 textStyle={[deltaBestLapConfig.textStyle, {color: parseFloat(gameData.deltaBestLap) > 0 ? 'red' : 'green' }]}
                 baseFontSize={deltaBestLapConfig.baseFontSize}
