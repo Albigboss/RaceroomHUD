@@ -78,6 +78,7 @@ int main(int argc, char **argv)
     float rlTyreTemperature = 60.0;
     float rrTyrePressure = 0.01;
     float rrTyreTemperature = 60.0;
+    int headLight = 0;
 
     while (1)
     {
@@ -126,6 +127,7 @@ int main(int argc, char **argv)
             engineMap += 1;
             lap += 1;
             deltaBestLap += 0.01;
+            headLight++;
         }
         if (current_gear > 7)
         {
@@ -158,6 +160,11 @@ int main(int argc, char **argv)
             engineMap = 1;
         }
 
+        if(headLight == 2)
+        {
+            headLight = 0;
+        }
+
         lapTime += 0.015;
 
         // Préparer les données pour le JSON
@@ -185,6 +192,7 @@ int main(int argc, char **argv)
         cJSON_AddNumberToObject(json, "rlTyreTemperature", rlTyreTemperature);
         cJSON_AddNumberToObject(json, "rrTyrePressure", rrTyrePressure);
         cJSON_AddNumberToObject(json, "rrTyreTemperature", rrTyreTemperature);
+        cJSON_AddNumberToObject(json, "headLight", headLight);
         
 
         char *json_string = cJSON_PrintUnformatted(json);

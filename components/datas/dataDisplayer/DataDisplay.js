@@ -1,59 +1,5 @@
 import React, { useMemo } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-
-/*const DataDisplay = ({ imageLayout, baseImageWidth, position, textStyle, baseFontSize, value }) => {
-    
-    // 1. Calcul du style pour la View (le conteneur)
-    const dynamicViewStyle = useMemo(() => {
-        if (!imageLayout || !position) return null
-
-        return {
-            position: 'absolute',
-            top: imageLayout.y + (imageLayout.height * position.top / 100),
-            left: imageLayout.x + (imageLayout.width * position.left / 100),
-            width: imageLayout.width * (position.width / 100),
-            height: imageLayout.height * (position.height / 100),
-            // On peut ajouter ici des styles par défaut si besoin
-            justifyContent: 'center',
-            alignItems: 'center',
-            //borderColor: 'red',
-            //borderWidth: 1,
-        }
-    }, [imageLayout, position])
-
-    // 2. Calcul du style pour le Text (la police)
-    const finalTextStyle = useMemo(() => {
-        if (!imageLayout || !baseImageWidth) return textStyle
-
-        const LINE_HEIGHT_RATIO = 0.9
-
-        const dynamicFontSize = (baseFontSize / baseImageWidth) * imageLayout.width
-        const dynamicLineHeight = dynamicFontSize * LINE_HEIGHT_RATIO
-
-        
-        return [StyleSheet.flatten(textStyle), 
-            { 
-                fontSize: dynamicFontSize,
-                lineHeight: dynamicLineHeight
-
-            }]
-
-    }, [imageLayout, baseImageWidth, textStyle, baseFontSize])
-
-    // 3. Rendu du composant
-    // Si la valeur est nulle ou la position non définie, on n'affiche rien.
-    if (value === undefined || value === null || !dynamicViewStyle) {
-        return null
-    }
-
-    return (
-        <View style={dynamicViewStyle}>
-            <Text style={finalTextStyle}>{value}</Text>
-        </View>
-    )
-}*/
-
-
+import { View, Text, StyleSheet, Image } from 'react-native'
 
 const DataDisplay = ({ imageLayout, baseImageWidth, value, config: { position, textStyle, baseFontSize } }) => {
 
@@ -171,7 +117,7 @@ export const FuelLapRemaining = ({ remainingFuel = null, fuelPerLap = null, ...o
     let valueToReturn = '---'
 
     if (remainingFuel != null && fuelPerLap != null) {
-        valueToReturn = ((parseFloat(gameData.remainingFuel) / parseFloat(gameData.fuelPerLap)).toFixed(1))
+        valueToReturn = ((parseFloat(remainingFuel) / parseFloat(fuelPerLap)).toFixed(1))
     }
 
     return (
@@ -264,8 +210,7 @@ export const PredictedTimeDisplay = ({ bestLap, deltaBestLap, ...otherProps }) =
             />
         )
     }
-    else
-    {
+    else {
         return (
             <LapTimeDisplay
                 value={null}
@@ -275,12 +220,11 @@ export const PredictedTimeDisplay = ({ bestLap, deltaBestLap, ...otherProps }) =
     }
 }
 
-export const TyreTempDisplay = ({ value, ...otherProps}) => {
+export const TyreTempDisplay = ({ value, ...otherProps }) => {
 
     let valueToReturn = '---.-°C'
 
-    if(value != null)
-    {
+    if (value != null) {
         valueToReturn = value.toFixed(1) + '°C'
     }
 
@@ -290,4 +234,50 @@ export const TyreTempDisplay = ({ value, ...otherProps}) => {
             {...otherProps}
         />
     )
+}
+
+export const HeadLightDisplay = ({ imageLayout, value, config: { position, link } }) => {
+
+    // 1. Calcul du style pour la View (le conteneur)
+    const dynamicViewStyle = useMemo(() => {
+        if (!imageLayout || !position) return null
+
+        return {
+            position: 'absolute',
+            top: imageLayout.y + (imageLayout.height * position.top / 100),
+            left: imageLayout.x + (imageLayout.width * position.left / 100),
+            width: imageLayout.width * (position.width / 100),
+            height: imageLayout.height * (position.height / 100),
+            // On peut ajouter ici des styles par défaut si besoin
+            justifyContent: 'center',
+            alignItems: 'center',
+        }
+    }, [imageLayout, position])
+
+    const getImageSource = (link) => {
+        switch (link) {
+            case 1:
+                return require('../../../assets/images/otherImages/HeadLightporsche911GT3R.png');
+            default:
+                return null
+        }
+    };
+
+    // Dans votre composant :
+    const image = getImageSource(link);
+
+    if (image == null || value == null || value == 0) {
+        return null
+    }
+
+    return (
+
+        <View style={dynamicViewStyle}>
+            <Image source={image} style={{
+                width: '100%',
+                height: '100%',
+                resizeMode: 'contain' }}
+             />
+        </View>
+    );
 }

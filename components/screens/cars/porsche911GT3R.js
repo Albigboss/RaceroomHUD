@@ -234,6 +234,11 @@ export function Porsche911GT3R() {
                         baseFontSize: 25
                     }}
 
+                    headLightConfig={{
+                        position: {top: 64, left: 9, width: 5, height: 6, },
+                        link: 1
+                    }}
+
                 />)}
             </ImageBackground>
 

@@ -2,14 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import dgram from 'react-native-udp';
-import DataDisplay, {GearDisplay, 
-    PercentageDisplay, 
-    ToFixedDisplay, 
+import DataDisplay, {
+    GearDisplay,
+    PercentageDisplay,
+    ToFixedDisplay,
     FuelLapRemaining,
     LapTimeDisplay,
     DeltaBestLapTimeDisplay,
     PredictedTimeDisplay,
-    TyreTempDisplay
+    TyreTempDisplay,
+    HeadLightDisplay, 
 } from './dataDisplayer/DataDisplay'
 
 const LISTEN_PORT = 8888;
@@ -49,6 +51,10 @@ export default function GameDataReceiver({
     rlTyreTemperatureConfig = defaultConfig,
     rrTyrePressureConfig = defaultConfig,
     rrTyreTemperatureConfig = defaultConfig,
+    headLightConfig = {
+        position: null, // Si la position est null, on ne l'affiche pas
+        link: null,
+    }
 
 
 }) {
@@ -77,6 +83,7 @@ export default function GameDataReceiver({
         rlTyreTemperature: null,
         rrTyrePressure: null,
         rrTyreTemperature: null,
+        headLight: null,
     });
 
     useEffect(() => {
@@ -202,7 +209,7 @@ export default function GameDataReceiver({
                 config={lapTimeConfig}
             />
 
-            
+
             <DeltaBestLapTimeDisplay
                 imageLayout={imageLayout}
                 baseImageWidth={baseImageWidth}
@@ -286,7 +293,11 @@ export default function GameDataReceiver({
                 config={rrTyreTemperatureConfig}
             />
 
-
+            <HeadLightDisplay
+                imageLayout={imageLayout}
+                value={gameData.headLight}
+                config={headLightConfig}
+            />
 
         </>
     );
