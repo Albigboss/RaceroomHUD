@@ -78,6 +78,9 @@ int main(int argc, char **argv)
     float rlTyreTemperature = 60.0;
     float rrTyrePressure = 0.01;
     float rrTyreTemperature = 60.0;
+    int headLight = 0;
+    int brakeTemp = 0;
+    double tyreWear = 0;
 
     while (1)
     {
@@ -126,6 +129,8 @@ int main(int argc, char **argv)
             engineMap += 1;
             lap += 1;
             deltaBestLap += 0.01;
+            headLight++;
+            tyreWear += 0.03;
         }
         if (current_gear > 7)
         {
@@ -158,7 +163,23 @@ int main(int argc, char **argv)
             engineMap = 1;
         }
 
+        if(headLight == 2)
+        {
+            headLight = 0;
+        }
+
         lapTime += 0.015;
+        brakeTemp++;
+
+        if(brakeTemp > 1500)
+        {
+            brakeTemp = -100;
+        }
+
+        if(tyreWear >= 1.0)
+        {
+            tyreWear = 0;
+        }
 
         // Préparer les données pour le JSON
         cJSON_AddNumberToObject(json, "speed", speed_kmh);
@@ -185,6 +206,27 @@ int main(int argc, char **argv)
         cJSON_AddNumberToObject(json, "rlTyreTemperature", rlTyreTemperature);
         cJSON_AddNumberToObject(json, "rrTyrePressure", rrTyrePressure);
         cJSON_AddNumberToObject(json, "rrTyreTemperature", rrTyreTemperature);
+        cJSON_AddNumberToObject(json, "headLight", headLight);
+        cJSON_AddNumberToObject(json, "flBrakeTemp", brakeTemp);
+        cJSON_AddNumberToObject(json, "flBrakeOptimalTemp", 600);
+        cJSON_AddNumberToObject(json, "flBrakeColdTemp", 300);
+        cJSON_AddNumberToObject(json, "flBrakeHotTemp", 900);
+        cJSON_AddNumberToObject(json, "frBrakeTemp", brakeTemp);
+        cJSON_AddNumberToObject(json, "frBrakeOptimalTemp", 600);
+        cJSON_AddNumberToObject(json, "frBrakeColdTemp", 300);
+        cJSON_AddNumberToObject(json, "frBrakeHotTemp", 900);
+        cJSON_AddNumberToObject(json, "rlBrakeTemp", brakeTemp);
+        cJSON_AddNumberToObject(json, "rlBrakeOptimalTemp", 600);
+        cJSON_AddNumberToObject(json, "rlBrakeColdTemp", 300);
+        cJSON_AddNumberToObject(json, "rlBrakeHotTemp", 900);
+        cJSON_AddNumberToObject(json, "rrBrakeTemp", brakeTemp);
+        cJSON_AddNumberToObject(json, "rrBrakeOptimalTemp", 600);
+        cJSON_AddNumberToObject(json, "rrBrakeColdTemp", 300);
+        cJSON_AddNumberToObject(json, "rrBrakeHotTemp", 900);
+        cJSON_AddNumberToObject(json, "flTyreWear", tyreWear);
+        cJSON_AddNumberToObject(json, "frTyreWear", tyreWear);
+        cJSON_AddNumberToObject(json, "rlTyreWear", tyreWear);
+        cJSON_AddNumberToObject(json, "rrTyreWear", tyreWear);
         
 
         char *json_string = cJSON_PrintUnformatted(json);

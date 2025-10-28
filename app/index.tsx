@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'; // 1. On importe useEffect
 import * as ScreenOrientation from 'expo-screen-orientation';
-
 import { Text, View, StyleSheet, StatusBar } from "react-native";
+import { useKeepAwake } from 'expo-keep-awake';
 
 //gestion de l'import des écrans :
 import { NavigationContainer } from '@react-navigation/native';
@@ -29,6 +29,7 @@ export default function Index() {
 
   }, []);// le tableau vide pour lancer l'effet qu'une seule fois
 
+  useKeepAwake();
 
   return (
     <View style={styles.container}>
