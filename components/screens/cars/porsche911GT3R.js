@@ -1,10 +1,14 @@
-import { View, Text, StyleSheet, ImageBackground, Dimensions, Image } from 'react-native'
+import { View, Text, StyleSheet, ImageBackground, Dimensions, Image, TouchableWithoutFeedback } from 'react-native'
 import GameDataReceiver from '../../datas/GameDataReceiver'; // Assurez-vous du bon chemin
 import React, { useState, useEffect, useMemo } from 'react'
 
+const images = [
+    require('../../../assets/images/hudImages/porsche911GT3R-1.png'),
+    require('../../../assets/images/hudImages/porsche911GT3R-2.png'),
+];/*require('../../../assets/images/hudImages/porsche911GT3R.png')*/
+
 export function Porsche911GT3R() {
 
-    const image = require('../../../assets/images/hudImages/porsche911GT3R.png')
 
     // État pour stocker la taille du conteneur
     const [containerLayout, setContainerLayout] = useState(null);
@@ -13,10 +17,18 @@ export function Porsche911GT3R() {
 
     const DESIGN_IMAGE_WIDTH = 1088; // La largeur de votre design
 
+    const [imageIndex, setImageIndex] = useState(0);
+
+    const changeBackgroundImage = () => {
+        // Passe à l'image suivante dans le tableau, et revient au début si on est à la fin
+        const nextIndex = (imageIndex + 1) % images.length;
+        setImageIndex(nextIndex);
+    };
+
 
     // 1. Obtenir les dimensions de l'image source une seule fois
     useEffect(() => {
-        const source = Image.resolveAssetSource(image);
+        const source = Image.resolveAssetSource(images[imageIndex]);
         if (source) {
             setImageDimensions({ width: source.width, height: source.height });
         }
@@ -57,195 +69,419 @@ export function Porsche911GT3R() {
         };
     }, [containerLayout, imageDimensions]);
 
+    const renderGameDataReceiver = (imageIndex) => {
+        switch (imageIndex) {
+            case 0:
+                return <GameDataReceiver1 />
+            case 1:
+                return <GameDataReceiver2 />
+            default:
+                return null
+        }
+    }
+
+    function GameDataReceiver1() {
+        return (
+            <GameDataReceiver
+                // NOUVEAU : On passe l'objet de disposition calculé
+                imageLayout={imageLayout}
+
+                baseImageWidth={DESIGN_IMAGE_WIDTH}
+
+                speedConfig={{
+                    position: { top: 17.4, left: 39.6, width: 20.5, height: 10, },
+                    textStyle: styles.textSpeed,
+                    baseFontSize: 60
+                }}
+
+                gearConfig={{
+                    position: { top: 28.5, left: 39.6, width: 20.6, height: 33, },
+                    textStyle: styles.textGear,
+                    baseFontSize: 200
+                }}
+
+                positionConfig={{
+                    position: { top: 54, left: 10, width: 4, height: 7.3, },
+                    textStyle: styles.textPosition,
+                    baseFontSize: 30
+                }}
+
+                remainingFuelConfig={{
+                    position: { top: 45, left: 28.7, width: 10.5, height: 8, },
+                    textStyle: styles.textRemainingFuel,
+                    baseFontSize: 40
+                }}
+
+                tcConfig={{
+                    position: { top: 63, left: 21, width: 5, height: 8, },
+                    textStyle: styles.textTc,
+                    baseFontSize: 35
+                }}
+
+                absConfig={{
+                    position: { top: 63, left: 33.5, width: 5, height: 8, },
+                    textStyle: styles.textAbs,
+                    baseFontSize: 35
+                }}
+
+                throttleConfig={{
+                    position: { top: 37, left: 9.5, width: 4.8, height: 7.3, },
+                    textStyle: styles.textThrottle,
+                    baseFontSize: 25
+                }}
+
+                brakeConfig={{
+                    position: { top: 45.5, left: 9.5, width: 4.8, height: 7.3, },
+                    textStyle: styles.textBrake,
+                    baseFontSize: 25
+                }}
+
+                engineMapConfig={{
+                    position: { top: 28.5, left: 10, width: 4, height: 7.3, },
+                    textStyle: styles.textEngineMap,
+                    baseFontSize: 30
+                }}
+
+                fuelPerLapConfig={{
+                    position: { top: 36.7, left: 28.7, width: 10.5, height: 8, },
+                    textStyle: styles.textFuelPerLap,
+                    baseFontSize: 40
+                }}
+
+                fuelCapacityConfig={{
+                    position: { top: 53.2, left: 28.7, width: 10.5, height: 8, },
+                    textStyle: styles.textFuelCapacity,
+                    baseFontSize: 40
+                }}
+
+                fuelLapConfig={{
+                    position: { top: 28.2, left: 28.7, width: 10.5, height: 8, },
+                    textStyle: styles.textFuelLap,
+                    baseFontSize: 30
+                }}
+
+                lapConfig={{
+                    position: { top: 19.3, left: 70, width: 6.5, height: 7.5, },
+                    textStyle: styles.textLap,
+                    baseFontSize: 30
+                }}
+
+                lapTimeConfig={{
+                    position: { top: 33, left: 60.3, width: 29, height: 12, },
+                    textStyle: styles.textLapTime,
+                    baseFontSize: 45
+                }}
+
+                deltaBestLapConfig={{
+                    position: { top: 49, left: 60.3, width: 14, height: 12.4, },
+                    textStyle: styles.textDeltaBestLap,
+                    baseFontSize: 35
+                }}
+
+                predTimeConfig={{
+                    position: { top: 49, left: 74.3, width: 15.2, height: 12.5, },
+                    textStyle: styles.textPredTime,
+                    baseFontSize: 35
+                }}
+
+                brakeBiasConfig={{
+                    position: { top: 68.5, left: 78.5, width: 9.3, height: 7.2, },
+                    textStyle: styles.textBrakeBias,
+                    baseFontSize: 30
+                }}
+
+                flTyrePressureConfig={{
+                    position: { top: 62, left: 39.5, width: 6.5, height: 4, },
+                    textStyle: styles.textFlTyrePressure,
+                    baseFontSize: 20
+                }}
+
+                flTyreTemperatureConfig={{
+                    position: { top: 65.9, left: 39.5, width: 10.2, height: 6, },
+                    textStyle: styles.textFlTyreTemperature,
+                    baseFontSize: 25
+                }}
+
+                frTyrePressureConfig={{
+                    position: { top: 62, left: 53.5, width: 6.5, height: 4, },
+                    textStyle: styles.textFrTyrePressure,
+                    baseFontSize: 20
+                }}
+
+                frTyreTemperatureConfig={{
+                    position: { top: 65.9, left: 50, width: 10.2, height: 6, },
+                    textStyle: styles.textFrTyreTemperature,
+                    baseFontSize: 25
+                }}
+
+
+                rlTyrePressureConfig={{
+                    position: { top: 72, left: 39.5, width: 6.5, height: 4, },
+                    textStyle: styles.textRlTyrePressure,
+                    baseFontSize: 20
+                }}
+
+                rlTyreTemperatureConfig={{
+                    position: { top: 76, left: 39.5, width: 10.2, height: 6, },
+                    textStyle: styles.textRlTyreTemperature,
+                    baseFontSize: 25
+                }}
+
+
+                rrTyrePressureConfig={{
+                    position: { top: 72, left: 53.5, width: 6.5, height: 4, },
+                    textStyle: styles.textRrTyrePressure,
+                    baseFontSize: 20
+                }}
+
+                rrTyreTemperatureConfig={{
+                    position: { top: 76, left: 50, width: 10.2, height: 6, },
+                    textStyle: styles.textRrTyreTemperature,
+                    baseFontSize: 25
+                }}
+
+                headLightConfig={{
+                    position: { top: 64, left: 9, width: 5, height: 6, },
+                    link: 1
+                }}
+
+            />
+        );
+    }
+
+    function GameDataReceiver2() {
+        return (
+            <GameDataReceiver
+                // NOUVEAU : On passe l'objet de disposition calculé
+                imageLayout={imageLayout}
+
+                baseImageWidth={DESIGN_IMAGE_WIDTH}
+
+                speedConfig={{
+                    position: { top: 17.4, left: 39.6, width: 20.5, height: 10, },
+                    textStyle: styles.textSpeed,
+                    baseFontSize: 60
+                }}
+
+                gearConfig={{
+                    position: { top: 28.5, left: 39.6, width: 20.6, height: 33, },
+                    textStyle: styles.textGear,
+                    baseFontSize: 200
+                }}
+
+                positionConfig={{
+                    position: { top: 54, left: 10, width: 4, height: 7.3, },
+                    textStyle: styles.textPosition,
+                    baseFontSize: 30
+                }}
+
+                tcConfig={{
+                    position: { top: 61.6, left: 44.2, width: 5, height: 8, },
+                    textStyle: styles.textTc,
+                    baseFontSize: 35
+                }}
+
+                absConfig={{
+                    position: { top: 61.6, left: 55, width: 5, height: 8, },
+                    textStyle: styles.textAbs,
+                    baseFontSize: 35
+                }}
+
+                throttleConfig={{
+                    position: { top: 37, left: 9.5, width: 4.8, height: 7.3, },
+                    textStyle: styles.textThrottle,
+                    baseFontSize: 25
+                }}
+
+                brakeConfig={{
+                    position: { top: 45.5, left: 9.5, width: 4.8, height: 7.3, },
+                    textStyle: styles.textBrake,
+                    baseFontSize: 25
+                }}
+
+                engineMapConfig={{
+                    position: { top: 28.5, left: 10, width: 4, height: 7.3, },
+                    textStyle: styles.textEngineMap,
+                    baseFontSize: 30
+                }}
+
+                fuelLapConfig={{
+                    position: { top: 18.4, left: 28.7, width: 10.5, height: 8, },
+                    textStyle: styles.textFuelLap,
+                    baseFontSize: 30
+                }}
+
+                lapConfig={{
+                    position: { top: 19.3, left: 70, width: 6.5, height: 7.5, },
+                    textStyle: styles.textLap,
+                    baseFontSize: 30
+                }}
+
+                lapTimeConfig={{
+                    position: { top: 33, left: 60.3, width: 29, height: 12, },
+                    textStyle: styles.textLapTime,
+                    baseFontSize: 45
+                }}
+
+                deltaBestLapConfig={{
+                    position: { top: 49, left: 60.3, width: 14, height: 12.4, },
+                    textStyle: styles.textDeltaBestLap,
+                    baseFontSize: 35
+                }}
+
+                predTimeConfig={{
+                    position: { top: 49, left: 74.3, width: 15.2, height: 12.5, },
+                    textStyle: styles.textPredTime,
+                    baseFontSize: 35
+                }}
+
+                brakeBiasConfig={{
+                    position: { top: 68.5, left: 78.5, width: 9.3, height: 7.2, },
+                    textStyle: styles.textBrakeBias,
+                    baseFontSize: 30
+                }}
+
+                headLightConfig={{
+                    position: { top: 64, left: 9, width: 5, height: 6, },
+                    link: 1
+                }}
+
+
+                flTyrePressureConfig={{
+                    position: { top: 28.5, left: 14.8, width: 8, height: 4, },
+                    textStyle: styles.textFlTyrePressure,
+                    baseFontSize: 25
+                }}
+
+                flTyreTemperatureConfig={{
+                    position: { top: 35, left: 14.8, width: 11.5, height: 6, },
+                    textStyle: styles.textFlTyreTemperature,
+                    baseFontSize: 30
+                }}
+
+                frTyrePressureConfig={{
+                    position: { top: 28.5, left: 30.5, width: 8, height: 4, },
+                    textStyle: styles.textFrTyrePressure,
+                    baseFontSize: 25
+                }}
+
+                frTyreTemperatureConfig={{
+                    position: { top: 35, left: 27, width: 11.5, height: 6, },
+                    textStyle: styles.textFrTyreTemperature,
+                    baseFontSize: 30
+                }}
+
+
+                rlTyrePressureConfig={{
+                    position: { top: 42, left: 14.8, width: 8, height: 4, },
+                    textStyle: styles.textRlTyrePressure,
+                    baseFontSize: 25
+                }}
+
+                rlTyreTemperatureConfig={{
+                    position: { top: 48, left: 14.8, width: 11.5, height: 6, },
+                    textStyle: styles.textRlTyreTemperature,
+                    baseFontSize: 30
+                }}
+
+
+                rrTyrePressureConfig={{
+                    position: { top: 42, left: 30.5, width: 8, height: 4, },
+                    textStyle: styles.textRrTyrePressure,
+                    baseFontSize: 25
+                }}
+
+                rrTyreTemperatureConfig={{
+                    position: { top: 48, left: 27, width: 11.5, height: 6, },
+                    textStyle: styles.textRrTyreTemperature,
+                    baseFontSize: 30
+                }}
+
+
+                //brake display
+                flBrakeTempConfig={{
+                    position: { top: 58.2, left: 14.8, width: 11.5, height: 9, },
+                    textStyle: styles.brake,
+                    baseFontSize: 30,
+                }}
+
+                frBrakeTempConfig={{
+                    position: { top: 58.2, left: 27, width: 11.5, height: 9, },
+                    textStyle: styles.brake,
+                    baseFontSize: 30,
+                }}
+
+                rlBrakeTempConfig={{
+                    position: { top: 71, left: 14.8, width: 11.5, height: 9, },
+                    textStyle: styles.brake,
+                    baseFontSize: 30,
+                }}
+
+                rrBrakeTempConfig={{
+                    position: { top: 71, left: 27, width: 11.5, height: 9, },
+                    textStyle: styles.brake,
+                    baseFontSize: 30,
+                }}
+
+                //tyreWear
+                flTyreWearConfig={{
+                    position: { top: 74.4, left: 39.5, width: 10, height: 5.5, },
+                    textStyle: styles.tyreWear,
+                    baseFontSize: 25,
+                }}
+
+                frTyreWearConfig={{
+                    position: { top: 74.4, left: 49.9, width: 10, height: 5.5, },
+                    textStyle: styles.tyreWear,
+                    baseFontSize: 25,
+                }}
+
+                rlTyreWearConfig={{
+                    position: { top: 82.5, left: 39.5, width: 10, height: 5.5, },
+                    textStyle: styles.tyreWear,
+                    baseFontSize: 25,
+                }}
+
+                rrTyreWearConfig={{
+                    position: { top: 82.5, left: 49.9, width: 10, height: 5.5, },
+                    textStyle: styles.tyreWear,
+                    baseFontSize: 25,
+                }}
+
+            />
+        )
+    }
+
     return (
 
-        <View
-            style={styles.screenContainer}
-            // 3. Mesurer le conteneur avec onLayout
-            onLayout={(event) => {
-                const { width, height } = event.nativeEvent.layout;
-                setContainerLayout({ width, height });
-            }}
-        >
-
-            {/* 2. On force l'image à remplir cette View avec un style absolu */}
-            <ImageBackground
-                source={image}
-                style={styles.imageBackground}
-                resizeMode="contain" // resizeMode est mieux en prop qu'en style
+        <TouchableWithoutFeedback onPress={changeBackgroundImage}>
+            <View
+                style={styles.screenContainer}
+                // 3. Mesurer le conteneur avec onLayout
+                onLayout={(event) => {
+                    const { width, height } = event.nativeEvent.layout;
+                    setContainerLayout({ width, height });
+                }}
 
             >
-                {/* 3. Le contenu est centré par l'ImageBackground comme avant */}
-                {imageLayout && (<GameDataReceiver
-                    // NOUVEAU : On passe l'objet de disposition calculé
-                    imageLayout={imageLayout}
 
-                    baseImageWidth={DESIGN_IMAGE_WIDTH}
+                {/* 2. On force l'image à remplir cette View avec un style absolu */}
+                <ImageBackground
+                    source={images[imageIndex]}
+                    style={styles.imageBackground}
+                    resizeMode="contain" // resizeMode est mieux en prop qu'en style
+                >
+                    {/* 3. Le contenu est centré par l'ImageBackground comme avant */}
+                    {imageLayout && renderGameDataReceiver(imageIndex)}
+                </ImageBackground>
 
-                    speedConfig={{
-                        position: { top: 17.4, left: 39.6, width: 20.5, height: 10, },
-                        textStyle: styles.textSpeed,
-                        baseFontSize: 60
-                    }}
-
-                    gearConfig={{
-                        position: { top: 28.5, left: 39.6, width: 20.6, height: 33, },
-                        textStyle: styles.textGear,
-                        baseFontSize: 200
-                    }}
-
-                    positionConfig={{
-                        position: { top: 54, left: 10, width: 4, height: 7.3, },
-                        textStyle: styles.textPosition,
-                        baseFontSize: 30
-                    }}
-
-                    remainingFuelConfig={{
-                        position: { top: 45, left: 28.7, width: 10.5, height: 8, },
-                        textStyle: styles.textRemainingFuel,
-                        baseFontSize: 40
-                    }}
-
-                    tcConfig={{
-                        position: { top: 63, left: 21, width: 5, height: 8, },
-                        textStyle: styles.textTc,
-                        baseFontSize: 35
-                    }}
-
-                    absConfig={{
-                        position: { top: 63, left: 33.5, width: 5, height: 8, },
-                        textStyle: styles.textAbs,
-                        baseFontSize: 35
-                    }}
-
-                    throttleConfig={{
-                        position: { top: 37, left: 9.5, width: 4.8, height: 7.3, },
-                        textStyle: styles.textThrottle,
-                        baseFontSize: 25
-                    }}
-
-                    brakeConfig={{
-                        position: { top: 45.5, left: 9.5, width: 4.8, height: 7.3, },
-                        textStyle: styles.textBrake,
-                        baseFontSize: 25
-                    }}
-
-                    engineMapConfig={{
-                        position: { top: 28.5, left: 10, width: 4, height: 7.3, },
-                        textStyle: styles.textEngineMap,
-                        baseFontSize: 30
-                    }}
-
-                    fuelPerLapConfig={{
-                        position: { top: 36.7, left: 28.7, width: 10.5, height: 8, },
-                        textStyle: styles.textFuelPerLap,
-                        baseFontSize: 40
-                    }}
-
-                    fuelCapacityConfig={{
-                        position: { top: 53.2, left: 28.7, width: 10.5, height: 8, },
-                        textStyle: styles.textFuelCapacity,
-                        baseFontSize: 40
-                    }}
-
-                    fuelLapConfig={{
-                        position: { top: 28.2, left: 28.7, width: 10.5, height: 8, },
-                        textStyle: styles.textFuelLap,
-                        baseFontSize: 30
-                    }}
-
-                    lapConfig={{
-                        position: { top: 19.3, left: 70, width: 6.5, height: 7.5, },
-                        textStyle: styles.textLap,
-                        baseFontSize: 30
-                    }}
-
-                    lapTimeConfig={{
-                        position: {top: 33, left: 60.3, width: 29, height: 12,},
-                        textStyle: styles.textLapTime,
-                        baseFontSize: 45
-                    }}
-
-                    deltaBestLapConfig={{
-                        position: {top: 49, left: 60.3, width: 14, height: 12.4,},
-                        textStyle: styles.textDeltaBestLap,
-                        baseFontSize: 35
-                    }}
-
-                    predTimeConfig={{
-                        position: {top: 49, left: 74.3, width: 15.2, height: 12.5,},
-                        textStyle: styles.textPredTime,
-                        baseFontSize: 35
-                    }}
-
-                    brakeBiasConfig={{
-                        position: {top: 68.5, left: 78.5, width: 9.3, height: 7.2,},
-                        textStyle: styles.textBrakeBias,
-                        baseFontSize: 30
-                    }}
-
-                    flTyrePressureConfig={{
-                        position: {top: 62, left: 39.5, width: 6.5, height: 4,},
-                        textStyle: styles.textFlTyrePressure,
-                        baseFontSize: 20
-                    }}
-
-                    flTyreTemperatureConfig={{
-                        position: {top: 65.9, left: 39.5, width: 10.2, height: 6,},
-                        textStyle: styles.textFlTyreTemperature,
-                        baseFontSize: 25
-                    }}
-
-                    frTyrePressureConfig={{
-                        position: {top: 62, left: 53.5, width: 6.5, height: 4,},
-                        textStyle: styles.textFrTyrePressure,
-                        baseFontSize: 20
-                    }}
-
-                    frTyreTemperatureConfig={{
-                        position: {top: 65.9, left: 50, width: 10.2, height: 6,},
-                        textStyle: styles.textFrTyreTemperature,
-                        baseFontSize: 25
-                    }}
-
-
-                    rlTyrePressureConfig={{
-                        position: {top: 72, left: 39.5, width: 6.5, height: 4,},
-                        textStyle: styles.textRlTyrePressure,
-                        baseFontSize: 20
-                    }}
-
-                    rlTyreTemperatureConfig={{
-                        position: {top: 76, left: 39.5, width: 10.2, height: 6,},
-                        textStyle: styles.textRlTyreTemperature,
-                        baseFontSize: 25
-                    }}
-
-
-                    rrTyrePressureConfig={{
-                        position: {top: 72, left: 53.5, width: 6.5, height: 4,},
-                        textStyle: styles.textRrTyrePressure,
-                        baseFontSize: 20
-                    }}
-
-                    rrTyreTemperatureConfig={{
-                        position: {top: 76, left: 50, width: 10.2, height: 6,},
-                        textStyle: styles.textRrTyreTemperature,
-                        baseFontSize: 25
-                    }}
-
-                    headLightConfig={{
-                        position: {top: 64, left: 9, width: 5, height: 6, },
-                        link: 1
-                    }}
-
-                />)}
-            </ImageBackground>
-
-        </View>
+            </View>
+        </TouchableWithoutFeedback>
     );
-}
 
+
+
+}
 const styles = StyleSheet.create({
 
     // NOUVEAU STYLE pour le conteneur de l'écran
@@ -481,6 +717,24 @@ const styles = StyleSheet.create({
     },
 
     textRrTyreTemperature: {
+        color: 'white',
+        fontSize: 20,
+        lineHeight: 20,
+        fontWeight: 'bold',
+    },
+
+    // --- Brake style ---
+
+    brake: {
+        color: 'white',
+        fontSize: 20,
+        lineHeight: 20,
+        fontWeight: 'bold',
+    },
+
+    // --- tyreWear style ---
+
+    tyreWear: {
         color: 'white',
         fontSize: 20,
         lineHeight: 20,

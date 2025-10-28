@@ -276,8 +276,58 @@ export const HeadLightDisplay = ({ imageLayout, value, config: { position, link 
             <Image source={image} style={{
                 width: '100%',
                 height: '100%',
-                resizeMode: 'contain' }}
-             />
+                resizeMode: 'contain'
+            }}
+            />
         </View>
     );
+}
+
+export const BrakeDisplay = ({ value, optimalTemp, hotTemp, coldTemp, config, ...otherProps }) => {
+
+    let r, g, b, configToReturn;
+
+    // Définition des couleurs clés
+    const coldColor = { r: 0, g: 0, b: 139 };      // Bleu foncé
+    const optimalColor = { r: 0, g: 137, b: 0 }; // Vert clair
+    const hotColor = { r: 255, g: 0, b: 0 };      // Rouge
+
+    if(value == null)
+    {
+        r = 255
+        g = 255
+        b = 255
+    }
+    else if (value <= coldTemp) {
+        // Si la température est inférieure ou égale à la température froide, on retourne le bleu foncé
+        [r, g, b] = [coldColor.r, coldColor.g, coldColor.b];
+    } else if (value >= hotTemp) {
+        // Si la température est supérieure ou égale à la température chaude, on retourne le rouge
+        [r, g, b] = [hotColor.r, hotColor.g, hotColor.b];
+    } else if (value < optimalTemp) {
+        // Calcul de l'interpolation entre la température froide et la température optimale
+        const ratio = (value - coldTemp) / (optimalTemp - coldTemp);
+        r = Math.round(coldColor.r + ratio * (optimalColor.r - coldColor.r));
+        g = Math.round(coldColor.g + ratio * (optimalColor.g - coldColor.g));
+        b = Math.round(coldColor.b + ratio * (optimalColor.b - coldColor.b));
+    } else { // value >= optimalTemp
+        // Calcul de l'interpolation entre la température optimale et la température chaude
+        const ratio = (value - optimalTemp) / (hotTemp - optimalTemp);
+        r = Math.round(optimalColor.r + ratio * (hotColor.r - optimalColor.r));
+        g = Math.round(optimalColor.g + ratio * (hotColor.g - optimalColor.g));
+        b = Math.round(optimalColor.b + ratio * (hotColor.b - optimalColor.b));
+    }
+
+    configToReturn = {
+            ...config,
+            textStyle: [config.textStyle, { color: `rgb(${r}, ${g}, ${b})` }]
+        }
+
+    return (
+        <DataDisplay
+            {...otherProps}
+            value={(value!=null)?(value.toFixed(0) + '°C'):('---°C')}
+            config={configToReturn}
+        />
+    )
 }
