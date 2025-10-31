@@ -1,6 +1,6 @@
 // GameDataReceiver.js (ou temp.js)
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import dgram from 'react-native-udp';
 import DataDisplay, {
     GearDisplay,
@@ -11,11 +11,18 @@ import DataDisplay, {
     DeltaBestLapTimeDisplay,
     PredictedTimeDisplay,
     TyreTempDisplay,
+    TyreTempDisplayWithColor,
     HeadLightDisplay,
     BrakeDisplay,
+    EngineDamageDisplay,
+    GearBoxDamageDisplay,
+    AerodynamicDamageDisplay,
+    SuspensionDamageDisplay
 } from './dataDisplayer/DataDisplay'
 
-const LISTEN_PORT = 8888;
+import { PortContext } from '../context/PortContext';
+
+
 const defaultConfig = {
     position: null, // Si la position est null, on ne l'affiche pas
     textStyle: {},
@@ -26,6 +33,7 @@ const defaultConfig = {
 export default function GameDataReceiver({
     imageLayout,          // L'objet { x, y, width, height }
     baseImageWidth,
+    tyreDesign,
 
     speedConfig = defaultConfig,
     gearConfig = defaultConfig,
@@ -67,7 +75,16 @@ export default function GameDataReceiver({
     rrTyreWearConfig = defaultConfig,
 
 
+    engineDamageConfig = defaultConfig,
+    gearBoxDamageConfig = defaultConfig,
+    aerodynamicDamageConfig = defaultConfig,
+    suspensionDamageConfig = defaultConfig,
 }) {
+
+    const { listeningPort } = useContext(PortContext)
+
+    const LISTEN_PORT = listeningPort;
+
     const [gameData, setGameData] = useState({
         speed: null,
         gear: null,
@@ -85,14 +102,36 @@ export default function GameDataReceiver({
         deltaBestLap: null,
         bestLap: null,
         brakeBias: null,
+
+        //fl tyre
         flTyrePressure: null,
         flTyreTemperature: null,
+        flTyreOptimalTemp: null,
+        flTyreHotTemp: null,
+        flTyreColdTemp: null,
+
+        //fr tyre
         frTyrePressure: null,
         frTyreTemperature: null,
+        frTyreOptimalTemp: null,
+        frTyreHotTemp: null,
+        frTyreColdTemp: null,
+
+        //rl tyre
         rlTyrePressure: null,
         rlTyreTemperature: null,
+        rlTyreOptimalTemp: null,
+        rlTyreHotTemp: null,
+        rlTyreColdTemp: null,
+
+        //rr tyre
         rrTyrePressure: null,
         rrTyreTemperature: null,
+        rrTyreOptimalTemp: null,
+        rrTyreHotTemp: null,
+        rrTyreColdTemp: null,
+
+
         headLight: null,
 
         //flBrake
@@ -123,6 +162,12 @@ export default function GameDataReceiver({
         frTyreWear: null,
         rlTyreWear: null,
         rrTyreWear: null,
+
+
+        engineDamage: null,
+        gearBoxDamage: null,
+        aeroDamage: null,
+        suspensionDamage: null,
     });
 
     useEffect(() => {
@@ -146,6 +191,7 @@ export default function GameDataReceiver({
     // Chacun utilise sa propre prop de style.
     return (
         <>
+
 
             <DataDisplay
                 imageLayout={imageLayout}
@@ -280,12 +326,33 @@ export default function GameDataReceiver({
                 config={flTyrePressureConfig}
             />
 
-            <TyreTempDisplay
-                imageLayout={imageLayout}
-                baseImageWidth={baseImageWidth}
-                value={gameData.flTyreTemperature}
-                config={flTyreTemperatureConfig}
-            />
+
+
+
+
+            {tyreDesign == 1 ? (
+
+                <TyreTempDisplay
+                    imageLayout={imageLayout}
+                    baseImageWidth={baseImageWidth}
+                    value={gameData.flTyreTemperature}
+                    config={flTyreTemperatureConfig}
+                />) :
+
+                (<TyreTempDisplayWithColor
+                    imageLayout={imageLayout}
+                    baseImageWidth={baseImageWidth}
+                    value={gameData.flTyreTemperature}
+                    config={flTyreTemperatureConfig}
+                    optimalTemp={gameData.flTyreOptimalTemp}
+                    hotTemp={gameData.flTyreHotTemp}
+                    coldTemp={gameData.flTyreColdTemp} />)
+            }
+
+
+
+
+            {/* */}
 
             <ToFixedDisplay
                 imageLayout={imageLayout}
@@ -295,12 +362,24 @@ export default function GameDataReceiver({
                 config={frTyrePressureConfig}
             />
 
-            <TyreTempDisplay
-                imageLayout={imageLayout}
-                baseImageWidth={baseImageWidth}
-                value={gameData.frTyreTemperature}
-                config={frTyreTemperatureConfig}
-            />
+            {tyreDesign == 1 ? (
+
+                <TyreTempDisplay
+                    imageLayout={imageLayout}
+                    baseImageWidth={baseImageWidth}
+                    value={gameData.frTyreTemperature}
+                    config={frTyreTemperatureConfig}
+                />) :
+
+                (<TyreTempDisplayWithColor
+                    imageLayout={imageLayout}
+                    baseImageWidth={baseImageWidth}
+                    value={gameData.frTyreTemperature}
+                    config={frTyreTemperatureConfig}
+                    optimalTemp={gameData.frTyreOptimalTemp}
+                    hotTemp={gameData.frTyreHotTemp}
+                    coldTemp={gameData.frTyreColdTemp} />)
+            }
 
             <ToFixedDisplay
                 imageLayout={imageLayout}
@@ -310,12 +389,24 @@ export default function GameDataReceiver({
                 config={rlTyrePressureConfig}
             />
 
-            <TyreTempDisplay
-                imageLayout={imageLayout}
-                baseImageWidth={baseImageWidth}
-                value={gameData.rlTyreTemperature}
-                config={rlTyreTemperatureConfig}
-            />
+            {tyreDesign == 1 ? (
+
+                <TyreTempDisplay
+                    imageLayout={imageLayout}
+                    baseImageWidth={baseImageWidth}
+                    value={gameData.rlTyreTemperature}
+                    config={rlTyreTemperatureConfig}
+                />) :
+
+                (<TyreTempDisplayWithColor
+                    imageLayout={imageLayout}
+                    baseImageWidth={baseImageWidth}
+                    value={gameData.rlTyreTemperature}
+                    config={rlTyreTemperatureConfig}
+                    optimalTemp={gameData.rlTyreOptimalTemp}
+                    hotTemp={gameData.rlTyreHotTemp}
+                    coldTemp={gameData.rlTyreColdTemp} />)
+            }
 
             <ToFixedDisplay
                 imageLayout={imageLayout}
@@ -325,12 +416,24 @@ export default function GameDataReceiver({
                 config={rrTyrePressureConfig}
             />
 
-            <TyreTempDisplay
-                imageLayout={imageLayout}
-                baseImageWidth={baseImageWidth}
-                value={gameData.rrTyreTemperature}
-                config={rrTyreTemperatureConfig}
-            />
+            {tyreDesign == 1 ? (
+
+                <TyreTempDisplay
+                    imageLayout={imageLayout}
+                    baseImageWidth={baseImageWidth}
+                    value={gameData.rrTyreTemperature}
+                    config={rrTyreTemperatureConfig}
+                />) :
+
+                (<TyreTempDisplayWithColor
+                    imageLayout={imageLayout}
+                    baseImageWidth={baseImageWidth}
+                    value={gameData.rrTyreTemperature}
+                    config={rrTyreTemperatureConfig}
+                    optimalTemp={gameData.rrTyreOptimalTemp}
+                    hotTemp={gameData.rrTyreHotTemp}
+                    coldTemp={gameData.rrTyreColdTemp} />)
+            }
 
             <HeadLightDisplay
                 imageLayout={imageLayout}
@@ -405,6 +508,31 @@ export default function GameDataReceiver({
                 baseImageWidth={baseImageWidth}
                 value={gameData.rrTyreWear}
                 config={rrTyreWearConfig}
+            />
+
+            <EngineDamageDisplay
+                imageLayout={imageLayout}
+                value={gameData.engineDamage}
+                config={engineDamageConfig}
+            />
+
+            <GearBoxDamageDisplay
+                imageLayout={imageLayout}
+                value={gameData.gearBoxDamage}
+                config={gearBoxDamageConfig}
+            />
+
+            <AerodynamicDamageDisplay
+            
+                imageLayout={imageLayout}
+                value={gameData.aeroDamage}
+                config={aerodynamicDamageConfig}
+            />
+
+            <SuspensionDamageDisplay
+                imageLayout={imageLayout}
+                value={gameData.suspensionDamage}
+                config={suspensionDamageConfig}
             />
 
         </>

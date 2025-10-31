@@ -227,7 +227,23 @@ int main(int argc, char **argv)
         cJSON_AddNumberToObject(json, "frTyreWear", tyreWear);
         cJSON_AddNumberToObject(json, "rlTyreWear", tyreWear);
         cJSON_AddNumberToObject(json, "rrTyreWear", tyreWear);
+
+        //tyreTemp
+        cJSON_AddNumberToObject(json, "flTyreOptimalTemp", 80);
+        cJSON_AddNumberToObject(json, "flTyreHotTemp", 95);
+        cJSON_AddNumberToObject(json, "flTyreColdTemp", 70);
         
+        cJSON_AddNumberToObject(json, "frTyreOptimalTemp", 80);
+        cJSON_AddNumberToObject(json, "frTyreHotTemp", 95);
+        cJSON_AddNumberToObject(json, "frTyreColdTemp", 70);
+
+        cJSON_AddNumberToObject(json, "rlTyreOptimalTemp", 80);
+        cJSON_AddNumberToObject(json, "rlTyreHotTemp", 95);
+        cJSON_AddNumberToObject(json, "rlTyreColdTemp", 70);
+
+        cJSON_AddNumberToObject(json, "rrTyreOptimalTemp", 80);
+        cJSON_AddNumberToObject(json, "rrTyreHotTemp", 95);
+        cJSON_AddNumberToObject(json, "rrTyreColdTemp", 70);
 
         char *json_string = cJSON_PrintUnformatted(json);
 
