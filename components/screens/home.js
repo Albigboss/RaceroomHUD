@@ -13,6 +13,16 @@ export function HomeScreen({ navigation }) {
                 title="Porsche 911 GT3 R"
                 onPress={() => navigation.navigate('Porsche911')}
                 style={styles.buttons}
+                color='#e30303'
+            />
+
+            <Text></Text>
+
+            <Button
+                title="Paramètres"
+                onPress={() => navigation.navigate('Settings')}
+                style={styles.buttons}
+                color='#1a1717ff'
             />
 
         </View>
@@ -21,7 +31,7 @@ export function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   mainTitle: {
-    fontSize: 18,
+    fontSize: 30,
     fontWeight: 'bold',
     // Retire toute marge ou padding qui pourrait être là par défaut
     marginTop: 50,
@@ -38,6 +48,6 @@ const styles = StyleSheet.create({
   },
 
   buttons: {
-    color: 'purple',
+    margin: '5%'
   },
 });

@@ -88,6 +88,8 @@ export function Porsche911GT3R() {
 
                 baseImageWidth={DESIGN_IMAGE_WIDTH}
 
+                tyreDesign={1}
+
                 speedConfig={{
                     position: { top: 17.4, left: 39.6, width: 20.5, height: 10, },
                     textStyle: styles.textSpeed,
@@ -245,6 +247,22 @@ export function Porsche911GT3R() {
                     link: 1
                 }}
 
+                engineDamageConfig={{
+                    position: { top: 31, left: 91, width: 6, height: 6, },
+                }}
+
+                gearBoxDamageConfig={{
+                    position: { top: 39, left: 91, width: 6, height: 6, },
+                }}
+
+                aerodynamicDamageConfig={{
+                    position: { top: 47, left: 91, width: 6, height: 6, },
+                }}
+
+                suspensionDamageConfig={{
+                    position: { top: 55, left: 91, width: 6, height: 6, },
+                }}
+
             />
         );
     }
@@ -256,6 +274,8 @@ export function Porsche911GT3R() {
                 imageLayout={imageLayout}
 
                 baseImageWidth={DESIGN_IMAGE_WIDTH}
+
+                tyreDesign={2}
 
                 speedConfig={{
                     position: { top: 17.4, left: 39.6, width: 20.5, height: 10, },
@@ -354,7 +374,7 @@ export function Porsche911GT3R() {
                 }}
 
                 flTyreTemperatureConfig={{
-                    position: { top: 35, left: 14.8, width: 11.5, height: 6, },
+                    position: { top: 35, left: 14.8, width: 11.8, height: 6, },
                     textStyle: styles.textFlTyreTemperature,
                     baseFontSize: 30
                 }}
@@ -366,7 +386,7 @@ export function Porsche911GT3R() {
                 }}
 
                 frTyreTemperatureConfig={{
-                    position: { top: 35, left: 27, width: 11.5, height: 6, },
+                    position: { top: 35, left: 26.8, width: 11.8, height: 6, },
                     textStyle: styles.textFrTyreTemperature,
                     baseFontSize: 30
                 }}
@@ -379,7 +399,7 @@ export function Porsche911GT3R() {
                 }}
 
                 rlTyreTemperatureConfig={{
-                    position: { top: 48, left: 14.8, width: 11.5, height: 6, },
+                    position: { top: 48, left: 14.8, width: 11.8, height: 6, },
                     textStyle: styles.textRlTyreTemperature,
                     baseFontSize: 30
                 }}
@@ -392,7 +412,7 @@ export function Porsche911GT3R() {
                 }}
 
                 rrTyreTemperatureConfig={{
-                    position: { top: 48, left: 27, width: 11.5, height: 6, },
+                    position: { top: 48, left: 26.8, width: 11.8, height: 6, },
                     textStyle: styles.textRrTyreTemperature,
                     baseFontSize: 30
                 }}
@@ -446,6 +466,22 @@ export function Porsche911GT3R() {
                     position: { top: 82.5, left: 49.9, width: 10, height: 5.5, },
                     textStyle: styles.tyreWear,
                     baseFontSize: 25,
+                }}
+
+                engineDamageConfig={{
+                    position: { top: 31, left: 91, width: 6, height: 6, },
+                }}
+
+                gearBoxDamageConfig={{
+                    position: { top: 39, left: 91, width: 6, height: 6, },
+                }}
+
+                aerodynamicDamageConfig={{
+                    position: { top: 47, left: 91, width: 6, height: 6, },
+                }}
+
+                suspensionDamageConfig={{
+                    position: { top: 55, left: 91, width: 6, height: 6, },
                 }}
 
             />
